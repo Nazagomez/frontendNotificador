@@ -176,7 +176,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 passwordController.text,
                               );
                               if (success) {
-                                Navigator.pushReplacementNamed(context, '/events');
+                                Navigator.pushReplacementNamed(context, '/home');
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
