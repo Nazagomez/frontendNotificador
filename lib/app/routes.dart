@@ -17,5 +17,7 @@ final Map<String, WidgetBuilder> appRoutes = {
 //incoming change
   '/login': (context) => const LoginScreen(), // Placeholder for login screen
   '/profile': (context) => const UserProfileScreen(),
+  '/events': (context) => const EventsScreen(),
+  '/event-details': (context) => const EventDetailScreen(),
   '/add-event': (context) => const EventFormScreen(),
 };
