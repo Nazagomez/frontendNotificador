@@ -3,7 +3,8 @@ import '../../events/models/eventModels.dart';
 import '../../events/services/eventServices.dart';
 import '../widgets/featuredEventCard.dart';
 import '../widgets/upcomingEventCard.dart';
-import '../../user/screens/userProfileScreen.dart'; // Ajusta el path si es necesario
+import '../../user/screens/userProfileScreen.dart';
+import '../../events/screens/events_screen.dart'; // Nuevo import
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -48,13 +49,21 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _onItemTapped(int index) {
-    if (index == 3) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const UserProfileScreen()),
-      );
-    } else {
-      setState(() => _selectedIndex = index);
+    switch (index) {
+      case 1:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const EventsScreen()),
+        );
+        break;
+      case 3:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const UserProfileScreen()),
+        );
+        break;
+      default:
+        setState(() => _selectedIndex = index);
     }
   }
 

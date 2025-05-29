@@ -67,7 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: fieldBackground,
-                    hintText: 'tu@email.com',
+                    hintText: 'tucorreo@email.com',
                     prefixIcon: const Icon(Icons.email_outlined),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),

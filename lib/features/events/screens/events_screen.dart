@@ -1,32 +1,98 @@
 import 'package:flutter/material.dart';
-import '../widgets/bottom_nav_bar.dart';
+import '../../events/services/eventServices.dart';
+import '../../events/models/eventModels.dart';
+import '../../events/screens/eventFormScreen.dart';
+import '../../home/screens/homeScreen.dart';
+import '../../user/screens/userProfileScreen.dart';
 
-
-
-
-class EventsScreen extends StatelessWidget {
+class EventsScreen extends StatefulWidget {
   const EventsScreen({super.key});
+
+  @override
+  State<EventsScreen> createState() => _EventsScreenState();
+}
+
+class _EventsScreenState extends State<EventsScreen> {
+  final EventService _eventService = EventService();
+  List<EventModel> events = [];
+  List<EventModel> filteredEvents = [];
+  bool loading = true;
+  int _selectedIndex = 1;
+  String selectedCategory = 'Todo';
+
+  @override
+  void initState() {
+    super.initState();
+    loadEvents();
+  }
+
+  Future<void> loadEvents() async {
+    try {
+      final fetchedEvents = await _eventService.fetchEvents();
+      setState(() {
+        events = fetchedEvents;
+        filteredEvents = fetchedEvents;
+        loading = false;
+      });
+    } catch (e) {
+      print('Error fetching events: \$e');
+      setState(() => loading = false);
+    }
+  }
+
+  void filterByCategory(String category) {
+    setState(() {
+      selectedCategory = category;
+      if (category == 'Todo') {
+        filteredEvents = [...events];
+      } else {
+        filteredEvents = events.where((e) => e.categoria.toLowerCase() == category.toLowerCase()).toList();
+      }
+    });
+  }
+
+  void _onItemTapped(int index) {
+    switch (index) {
+      case 0:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
+        break;
+      case 1:
+        break;
+      case 3:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const UserProfileScreen()),
+        );
+        break;
+      default:
+        setState(() => _selectedIndex = index);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     const primaryColor = Color(0xFF6C63FF);
+    const backgroundColor = Color(0xFFF3F2F3);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: backgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 1,
-        title: const Text('Events', style: TextStyle(color: Colors.black)),
+        title: const Text('Eventos', style: TextStyle(color: Colors.black)),
         centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // Search bar
             TextField(
               decoration: InputDecoration(
-                hintText: 'Search events',
+                hintText: 'Buscar eventos',
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.filter_list),
@@ -41,66 +107,87 @@ class EventsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-
-            // Filter buttons
             Wrap(
               spacing: 8,
-              children: ['All', 'Sport', 'Music', 'Art'].map((text) {
-                return Chip(label: Text(text));
+              children: ['Todo', 'Deportes', 'Música', 'Arte', 'Tecnología'].map((text) {
+                final isSelected = selectedCategory == text;
+                return ChoiceChip(
+                  label: Text(text),
+                  selected: isSelected,
+                  onSelected: (_) => filterByCategory(text),
+                  selectedColor: primaryColor.withOpacity(0.2),
+                );
               }).toList(),
             ),
             const SizedBox(height: 12),
-
-            // Event cards
             Expanded(
-              child: ListView.builder(
-                itemCount: 2,
-                itemBuilder: (_, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, '/event-details');
-                    },
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      margin: const EdgeInsets.only(bottom: 16),
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 140,
-                            color: Colors.blueGrey[100],
-                            child: const Center(child: Icon(Icons.image)),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(12),
+              child: loading
+                  ? const Center(child: CircularProgressIndicator())
+                  : ListView.builder(
+                      itemCount: filteredEvents.length,
+                      itemBuilder: (_, index) {
+                        final event = filteredEvents[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, '/event-details');
+                          },
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            margin: const EdgeInsets.only(bottom: 16),
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
-                                Text('31 May', style: TextStyle(fontWeight: FontWeight.bold)),
-                                SizedBox(height: 4),
-                                Text('Music Festival', style: TextStyle(fontSize: 16)),
-                                Text('Nicoya, Guanacaste'),
-                                SizedBox(height: 4),
-                                Text('20 attending'),
+                              children: [
+                                event.imagen.isNotEmpty
+                                    ? ClipRRect(
+                                        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                                        child: Image.network(
+                                          event.imagen,
+                                          height: 140,
+                                          width: double.infinity,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      )
+                                    : Container(
+                                        height: 140,
+                                        decoration: BoxDecoration(
+                                          color: Colors.blueGrey[100],
+                                          borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                                        ),
+                                        child: const Center(child: Icon(Icons.image)),
+                                      ),
+                                Padding(
+                                  padding: const EdgeInsets.all(12),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(event.fecha, style: const TextStyle(fontWeight: FontWeight.bold)),
+                                      const SizedBox(height: 4),
+                                      Text(event.titulo, style: const TextStyle(fontSize: 16)),
+                                      Text(event.lugar),
+                                      const SizedBox(height: 4),
+                                      Text('${event.asistentes} asistentes'),
+                                    ],
+                                  ),
+                                ),
                               ],
                             ),
                           ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
-
-            // Add event button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const EventFormScreen()),
+                  );
+                },
                 icon: const Icon(Icons.add),
-                label: const Text('Add event'),
+                label: const Text('Nuevo evento'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: primaryColor,
                   foregroundColor: Colors.white,
@@ -114,7 +201,20 @@ class EventsScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: const BottomNavBar(),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        selectedItemColor: primaryColor,
+        unselectedItemColor: Colors.grey,
+        backgroundColor: Colors.white,
+        type: BottomNavigationBarType.fixed,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Inicio'),
+          BottomNavigationBarItem(icon: Icon(Icons.event_note_outlined), label: 'Eventos'),
+          BottomNavigationBarItem(icon: Icon(Icons.notifications_none), label: 'Notificaciones'),
+          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Mi perfil'),
+        ],
+      ),
     );
   }
 }
