@@ -81,7 +81,7 @@ class UpcomingEventCard extends StatelessWidget {
                     const Icon(Icons.people, size: 16, color: Colors.grey),
                     const SizedBox(width: 6),
                     Text(
-                      '${event.asistentes} asistentes',
+                      '${event.fecha} fechas',
                       style: const TextStyle(color: Colors.grey, fontSize: 13),
                     ),
                   ],

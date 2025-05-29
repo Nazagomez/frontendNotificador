@@ -10,16 +10,15 @@ class FeaturedEventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 240,
-      height: 240,
+      height: 260,
       child: Card(
-        elevation: 4,
-        margin: const EdgeInsets.only(right: 12),
+        color: Colors.white,
+        elevation: 3,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         clipBehavior: Clip.antiAlias,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Imagen superior
             event.imagen.isNotEmpty
                 ? Image.network(
                     event.imagen,
@@ -38,12 +37,12 @@ class FeaturedEventCard extends StatelessWidget {
                   )
                 : Container(
                     height: 120,
+                    width: double.infinity,
                     color: const Color(0xFF9DA8C3),
                     child: const Center(
                       child: Icon(Icons.image_outlined, size: 40, color: Colors.white),
                     ),
                   ),
-            // Contenido
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(12),
@@ -56,7 +55,7 @@ class FeaturedEventCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 6),
                     Row(
                       children: [
                         const Icon(Icons.event, size: 16, color: Colors.grey),
@@ -64,25 +63,29 @@ class FeaturedEventCard extends StatelessWidget {
                         Text(event.fecha, style: const TextStyle(color: Colors.grey, fontSize: 13)),
                       ],
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 4),
                     Row(
                       children: [
                         const Icon(Icons.place, size: 16, color: Colors.grey),
                         const SizedBox(width: 6),
                         Expanded(
-                          child: Text(event.lugar,
-                              style: const TextStyle(color: Colors.grey, fontSize: 13),
-                              overflow: TextOverflow.ellipsis),
+                          child: Text(
+                            event.lugar,
+                            style: const TextStyle(color: Colors.grey, fontSize: 13),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 4),
                     Row(
                       children: [
                         const Icon(Icons.people, size: 16, color: Colors.grey),
                         const SizedBox(width: 6),
-                        Text('${event.asistentes} asistentes',
-                            style: const TextStyle(color: Colors.grey, fontSize: 13)),
+                        Text(
+                          '${event.asistentes} asistentes',
+                          style: const TextStyle(color: Colors.grey, fontSize: 13),
+                        ),
                       ],
                     ),
                   ],
