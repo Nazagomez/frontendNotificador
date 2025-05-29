@@ -3,6 +3,7 @@ import '../../events/models/eventModels.dart';
 import '../../events/services/eventServices.dart';
 import '../widgets/featuredEventCard.dart';
 import '../widgets/upcomingEventCard.dart';
+import '../../user/screens/userProfileScreen.dart'; // Ajusta el path si es necesario
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -41,13 +42,20 @@ class _HomeScreenState extends State<HomeScreen> {
         loading = false;
       });
     } catch (e) {
-      print('Error al cargar eventos: $e');
+      print('Error al cargar eventos: \$e');
       setState(() => loading = false);
     }
   }
 
   void _onItemTapped(int index) {
-    setState(() => _selectedIndex = index);
+    if (index == 3) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const UserProfileScreen()),
+      );
+    } else {
+      setState(() => _selectedIndex = index);
+    }
   }
 
   @override
@@ -99,13 +107,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Text('Eventos Destacados', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                       ),
                     if (featured.isNotEmpty)
-                      SizedBox(
-                        height: 220,
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: featured.length,
-                          separatorBuilder: (_, __) => const SizedBox(width: 12),
-                          itemBuilder: (_, i) => FeaturedEventCard(event: featured[i]),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
+                        child: Row(
+                          children: featured.map((e) => FeaturedEventCard(event: e)).toList(),
                         ),
                       ),
                     const SizedBox(height: 24),
@@ -116,9 +122,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     if (upcoming.isNotEmpty)
                       ...upcoming.map((e) => Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: UpcomingEventCard(event: e),
-                      )),
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: UpcomingEventCard(event: e),
+                          )),
                   ],
                 ),
               ),
