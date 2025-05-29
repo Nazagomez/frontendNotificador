@@ -10,10 +10,11 @@ class NotificadorApp extends StatelessWidget {
       title: 'Notificador UNA',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.indigo,
-        scaffoldBackgroundColor: Colors.white,
-        useMaterial3: true,
-      ),
+  primarySwatch: Colors.indigo,
+  scaffoldBackgroundColor: const Color(0xFFF9FAFB),
+  useMaterial3: true,
+),
+
       initialRoute: '/',
       routes: appRoutes,
     );
