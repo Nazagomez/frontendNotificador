@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'routing/app_router.dart';
+import '../shared/widgets/top_header.dart';
 
 void main() => runApp(const MyApp());
 
@@ -34,18 +35,22 @@ class _MainLayoutState extends State<MainLayout> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(60),
+        child: const TopHeader(),
+      ),
       body: screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
-          BottomNavigationBarItem(icon: Icon(Icons.event), label: 'Evento'),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.event), label: 'Events'),
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications),
-            label: 'Notificaciones',
+            label: 'Notifications',
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Mi perfil'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
     );

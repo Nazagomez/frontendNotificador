@@ -26,7 +26,7 @@ class EventCardSmall extends StatelessWidget {
                   top: Radius.circular(12),
                 ),
                 child: Image.asset(
-                  'assets/images/sample.jpg',
+                  'lib/assets/images/image-not-found.png',
                   width: double.infinity,
                   fit: BoxFit.cover,
                 ),

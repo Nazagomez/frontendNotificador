@@ -27,7 +27,7 @@ class EventCardMedium extends StatelessWidget {
                   top: Radius.circular(16),
                 ),
                 child: Image.asset(
-                  'assets/images/sample.jpg',
+                  'lib/assets/images/image-not-found.png',
                   width: double.infinity,
                   fit: BoxFit.cover,
                 ),
