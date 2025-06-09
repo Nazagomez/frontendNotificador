@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:notificador/core/theme/app_theme.dart';
+import 'package:notificador/shared/services/socket_service.dart';
+import 'package:provider/provider.dart';
 import 'routing/app_router.dart';
 import '../shared/widgets/top_header.dart';
 
-void main() => runApp(const MyApp());
+void main() => runApp(
+  ChangeNotifierProvider(
+    create: (_) => SocketService()..connect(),
+    child: const MyApp(),
+  ),
+);
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
