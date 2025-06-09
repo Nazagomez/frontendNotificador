@@ -7,15 +7,27 @@ class AuthProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
+  String? _token;
+  String? get token => _token;
+
   Future<bool> login(String email, String password) async {
     _isLoading = true;
-    notifyListeners(); // Le dice a la interfaz que algo cambió (loading)
+    notifyListeners();
 
     final result = await _authService.login(email, password);
+    if (result) {
+      _token = await _authService.getToken();
+    }
 
     _isLoading = false;
-    notifyListeners(); // Termina el loading
+    notifyListeners();
 
-    return result; // true si fue exitoso, false si falló
+    return result;
+  }
+
+  Future<void> logout() async {
+    await _authService.logout();
+    _token = null;
+    notifyListeners();
   }
 }

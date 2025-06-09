@@ -1,24 +1,31 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   final String _baseUrl = 'http://10.0.2.2:3000/api';
 
   Future<bool> login(String email, String password) async {
-    final url = Uri.parse('$_baseUrl/inicio-sesion');
+    final url = Uri.parse('$_baseUrl/auth/login');
 
     try {
-      final response = await http.get(url);
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'Correo': email,
+          'Contrasena': password,
+        }),
+      );
 
       if (response.statusCode == 200) {
-        final List<dynamic> data = jsonDecode(response.body);
+        final data = jsonDecode(response.body);
+        final token = data['token'];
 
-        final user = data.firstWhere(
-          (u) => u['Correo'] == email && u['Contrasena'] == password,
-          orElse: () => null,
-        );
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', token);
 
-        return user != null;
+        return true;
       } else {
         return false;
       }
@@ -27,4 +34,14 @@ class AuthService {
       return false;
     }
   }
-}
+
+  Future<String?> getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token');
+  }
+
+  Future<void> logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('token');
+  }
+}  
