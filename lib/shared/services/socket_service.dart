@@ -10,8 +10,10 @@ import 'package:notificador/features/notifications/models/notification_model.dar
 class SocketService with ChangeNotifier {
   late IO.Socket _socket;
   final List<NotificationModel> _notifications = [];
+  int _unreadCount = 0;
 
   List<NotificationModel> get notifications => _notifications;
+  int get unreadCount => _unreadCount;
 
   void connect() {
     _socket = IO.io(ApiConstants.url, <String, dynamic>{
@@ -33,6 +35,7 @@ class SocketService with ChangeNotifier {
         Map<String, dynamic>.from(data),
       );
       _notifications.insert(0, notify);
+      _unreadCount++;
       notifyListeners();
     });
 
@@ -54,6 +57,11 @@ class SocketService with ChangeNotifier {
     } catch (e) {
       debugPrint('Error loading notifications: $e');
     }
+  }
+
+  void resetUnreadCount() {
+    _unreadCount = 0;
+    notifyListeners();
   }
 
   void disconnect() {
