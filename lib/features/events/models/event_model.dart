@@ -23,15 +23,15 @@ class Event {
 
   factory Event.fromJson(Map<String, dynamic> json) {
     return Event(
-      id: json['id'],
-      title: json['title'],
-      description: json['description'],
-      date: DateTime.parse(json['date']),
-      location: json['location'],
-      organizer: json['organizer'],
-      category: json['category'],
-      state: json['state'],
-      featured: json['featured'],
+      id: json['id'] ?? '',
+      title: json['title'] ?? 'No Title',
+      description: json['description'] ?? '',
+      date: DateTime.tryParse(json['date'] ?? '') ?? DateTime.now(),
+      location: json['location'] ?? '',
+      organizer: json['organizer'] ?? '',
+      category: json['category'] ?? 'other',
+      state: json['state'] ?? '',
+      featured: json['featured'] ?? false,
     );
   }
 }

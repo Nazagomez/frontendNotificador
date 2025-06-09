@@ -1,54 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:notificador/features/events/models/event_model.dart';
 
-class EventCardSmall extends StatelessWidget {
+class SmallEventCard extends StatelessWidget {
   final Event event;
 
-  const EventCardSmall({super.key, required this.event});
+  const SmallEventCard({super.key, required this.event});
 
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: 1, // cuadrada
-      child: Container(
-        margin: const EdgeInsets.only(right: 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
-        ),
+      aspectRatio: 1, // Cuadrada
+      child: Card(
         child: Column(
           children: [
+            // Imagen ocupa 2/5
             Expanded(
               flex: 2,
-              child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(12),
-                ),
-                child: Image.asset(
-                  'lib/assets/images/image-not-found.png',
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
+              child: Image.asset(
+                'assets/images/image-not-found.png',
+                fit: BoxFit.cover,
+                width: double.infinity,
               ),
             ),
+            // Texto ocupa 3/5
             Expanded(
               flex: 3,
-              child: Padding(
-                padding: const EdgeInsets.all(8),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      event.title,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      event.category,
-                      style: const TextStyle(color: Colors.grey),
-                    ),
-                  ],
+              child: Center(
+                child: Text(
+                  event.title,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
             ),
