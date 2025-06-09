@@ -5,17 +5,29 @@ class TopHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      color: Colors.white,
+      decoration: BoxDecoration(
+        color: theme.appBarTheme.backgroundColor ?? theme.colorScheme.surface,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Row(
         children: [
-          const Icon(Icons.notifications_none, size: 28),
-          const SizedBox(width: 10),
-          const Text(
-            'UNAvoz',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          Icon(
+            Icons.notifications_none,
+            size: 28,
+            color: theme.iconTheme.color,
           ),
+          const SizedBox(width: 10),
+          Text('UNAvoz', style: theme.textTheme.titleLarge),
         ],
       ),
     );

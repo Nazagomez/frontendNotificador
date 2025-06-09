@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notificador/core/constants/event_categories.dart';
 import 'package:notificador/features/events/dialogs/event_filter_dialog.dart';
+import 'package:notificador/features/events/screens/event_details_screen.dart';
 import 'package:notificador/features/events/widgets/event_card_medium.dart';
 import 'package:notificador/features/events/models/event_model.dart';
 import 'package:notificador/features/events/services/event_service.dart';
@@ -137,21 +138,15 @@ class _EventsScreenState extends State<EventsScreen> {
   }
 
   @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final filteredEvents = getFilteredEvents();
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Events'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        foregroundColor: Theme.of(context).appBarTheme.foregroundColor,
         elevation: 0,
       ),
       body: Padding(
@@ -159,7 +154,6 @@ class _EventsScreenState extends State<EventsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Search Bar + Filter Icon
             Row(
               children: [
                 Expanded(
@@ -167,16 +161,25 @@ class _EventsScreenState extends State<EventsScreen> {
                     onChanged: (value) => setState(() => searchQuery = value),
                     decoration: InputDecoration(
                       hintText: 'Search events...',
-                      prefixIcon: const Icon(Icons.search),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: Theme.of(context).iconTheme.color,
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
                       ),
                     ),
                   ),
                 ),
                 const SizedBox(width: 12),
                 IconButton(
-                  icon: const Icon(Icons.filter_list),
+                  icon: Icon(
+                    Icons.filter_list,
+                    color: Theme.of(context).iconTheme.color,
+                  ),
                   onPressed: () async {
                     final filterResult = await showDialog<EventFilter>(
                       context: context,
@@ -210,7 +213,6 @@ class _EventsScreenState extends State<EventsScreen> {
 
             const SizedBox(height: 16),
 
-            // Categories list
             SizedBox(
               height: 40,
               child: ListView.builder(
@@ -224,6 +226,13 @@ class _EventsScreenState extends State<EventsScreen> {
                     child: ChoiceChip(
                       label: Text(cat),
                       selected: isSelected,
+                      selectedColor: Theme.of(context).colorScheme.primary,
+                      labelStyle: TextStyle(
+                        color:
+                            isSelected
+                                ? Colors.white
+                                : Theme.of(context).textTheme.bodyMedium?.color,
+                      ),
                       onSelected: (_) => setState(() => selectedCategory = cat),
                     ),
                   );
@@ -233,7 +242,6 @@ class _EventsScreenState extends State<EventsScreen> {
 
             const SizedBox(height: 16),
 
-            // Loading/Error/Events list
             Expanded(
               child: Builder(
                 builder: (context) {
@@ -241,10 +249,22 @@ class _EventsScreenState extends State<EventsScreen> {
                     return const Center(child: CircularProgressIndicator());
                   }
                   if (errorMessage != null) {
-                    return Center(child: Text(errorMessage!));
+                    return Center(
+                      child: Text(
+                        errorMessage!,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                      ),
+                    );
                   }
                   if (filteredEvents.isEmpty) {
-                    return const Center(child: Text('No events found'));
+                    return Center(
+                      child: Text(
+                        'No events found',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    );
                   }
 
                   return ListView.builder(
@@ -262,7 +282,14 @@ class _EventsScreenState extends State<EventsScreen> {
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: InkWell(
                           onTap: () {
-                            // TODO: Navigate to event details screen
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) =>
+                                        EventDetailsScreen(event: event),
+                              ),
+                            );
                           },
                           child: MediumEventCard(event: event),
                         ),

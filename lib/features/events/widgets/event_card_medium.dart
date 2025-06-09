@@ -12,9 +12,17 @@ class MediumEventCard extends StatelessWidget {
       height: 200,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
-          boxShadow: [BoxShadow(blurRadius: 4, color: Colors.black12)],
+          boxShadow: [
+            BoxShadow(
+              blurRadius: 4,
+              color:
+                  Theme.of(context).brightness == Brightness.light
+                      ? Colors.black12
+                      : Colors.black45,
+            ),
+          ],
         ),
         child: Column(
           children: [
@@ -30,7 +38,10 @@ class MediumEventCard extends StatelessWidget {
               flex: 3,
               child: Padding(
                 padding: const EdgeInsets.all(8),
-                child: Text(event.title),
+                child: Text(
+                  event.title,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
               ),
             ),
           ],

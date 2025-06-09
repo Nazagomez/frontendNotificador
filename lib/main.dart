@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notificador/core/theme/app_theme.dart';
 import 'routing/app_router.dart';
 import '../shared/widgets/top_header.dart';
 
@@ -11,6 +12,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
       home: const MainLayout(),
     );
   }
@@ -41,6 +45,9 @@ class _MainLayoutState extends State<MainLayout> {
       ),
       body: screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: Theme.of(context).colorScheme.primary,
+        unselectedItemColor: Theme.of(context).colorScheme.onSurface,
+        showUnselectedLabels: true,
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const [

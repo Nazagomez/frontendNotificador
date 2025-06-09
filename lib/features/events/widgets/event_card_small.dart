@@ -9,11 +9,10 @@ class SmallEventCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: 1, // Cuadrada
+      aspectRatio: 1,
       child: Card(
         child: Column(
           children: [
-            // Imagen ocupa 2/5
             Expanded(
               flex: 2,
               child: Image.asset(
@@ -22,14 +21,15 @@ class SmallEventCard extends StatelessWidget {
                 width: double.infinity,
               ),
             ),
-            // Texto ocupa 3/5
             Expanded(
               flex: 3,
               child: Center(
                 child: Text(
                   event.title,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                 ),
               ),
             ),
