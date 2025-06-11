@@ -29,80 +29,54 @@ class HomeScreen extends StatelessWidget {
           final featuredEvents = snapshot.data!['featured']!;
           final upcomingEvents = snapshot.data!['upcoming']!;
 
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          return ListView(
+            padding: const EdgeInsets.symmetric(vertical: 16),
             children: [
-              // Título Featured Events
               const Padding(
-                padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+                padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   'Featured Events',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ),
-
-              // Sección Featured
+              const SizedBox(height: 8),
               SizedBox(
-                height:
-                    MediaQuery.of(context).size.height * 0.25 -
-                    kBottomNavigationBarHeight,
-                child: Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children:
-                        featuredEvents.map((event) {
-                          return Flexible(
-                            child: ConstrainedBox(
-                              constraints: const BoxConstraints(maxWidth: 380),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8.0,
-                                ),
-                                child: SmallEventCard(event: event),
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                  ),
+                height: MediaQuery.of(context).size.height * 0.25,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: featuredEvents.length,
+                  separatorBuilder: (_, __) => const SizedBox(width: 12),
+                  itemBuilder: (context, index) {
+                    return SizedBox(
+                      width: 180,
+                      child: SmallEventCard(event: featuredEvents[index]),
+                    );
+                  },
                 ),
               ),
 
-              // Título Upcoming
+              const SizedBox(height: 24),
               const Padding(
-                padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
+                padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   'Upcoming Events',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ),
-
-              // Sección Upcoming
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 30,
-                    vertical: 8,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children:
-                        upcomingEvents.map((event) {
-                          return Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 8.0,
-                              ),
-                              child: Center(
-                                child: SizedBox(
-                                  width: 380,
-                                  child: MediumEventCard(event: event),
-                                ),
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                  ),
-                ),
+              const SizedBox(height: 8),
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: upcomingEvents.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 12),
+                itemBuilder: (context, index) {
+                  return SizedBox(
+                    height: 200,
+                    child: MediumEventCard(event: upcomingEvents[index]),
+                  );
+                },
               ),
             ],
           );

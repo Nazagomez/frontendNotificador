@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:notificador/core/theme/app_theme.dart';
+import 'package:notificador/features/events/screens/events_screen.dart';
+import 'package:notificador/features/home/screens/home_screen.dart';
+import 'package:notificador/features/notifications/screens/notifications_screen.dart';
+import 'package:notificador/features/profile/screens/login_screen.dart';
+import 'package:notificador/features/profile/screens/profile_screen.dart';
+import 'package:notificador/shared/services/auth_service.dart';
 import 'package:notificador/shared/services/socket_service.dart';
 import 'package:provider/provider.dart';
-import 'routing/app_router.dart';
 import '../shared/widgets/top_header.dart';
 
 void main() => runApp(
-  ChangeNotifierProvider(
-    create: (_) => SocketService()..connect(),
+  MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (_) => SocketService()..connect()),
+      ChangeNotifierProvider(create: (_) => AuthService()),
+    ],
     child: const MyApp(),
   ),
 );
@@ -49,6 +57,16 @@ class _MainLayoutState extends State<MainLayout> {
 
   @override
   Widget build(BuildContext context) {
+    final authService = context.watch<AuthService>();
+    final isGuest = authService.isGuest;
+
+    final List<Widget> screens = [
+      const HomeScreen(),
+      const EventsScreen(),
+      const NotificationsScreen(),
+      isGuest ? const LoginScreen() : const ProfileScreen(),
+    ];
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),

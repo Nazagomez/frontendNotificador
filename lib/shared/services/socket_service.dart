@@ -4,11 +4,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:notificador/core/constants/api_constants.dart';
 import 'package:notificador/features/notifications/services/notification_service.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:socket_io_client/socket_io_client.dart' as io;
 import 'package:notificador/features/notifications/models/notification_model.dart';
 
 class SocketService with ChangeNotifier {
-  late IO.Socket _socket;
+  late io.Socket _socket;
   final List<NotificationModel> _notifications = [];
   int _unreadCount = 0;
 
@@ -16,7 +16,7 @@ class SocketService with ChangeNotifier {
   int get unreadCount => _unreadCount;
 
   void connect() {
-    _socket = IO.io(ApiConstants.url, <String, dynamic>{
+    _socket = io.io(ApiConstants.url, <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,
     });
