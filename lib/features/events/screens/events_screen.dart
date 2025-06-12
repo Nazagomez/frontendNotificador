@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:notificador/core/constants/event_categories.dart';
-import 'package:notificador/features/events/dialogs/event_filter_dialog.dart';
-import 'package:notificador/features/events/screens/event_details_screen.dart';
-import 'package:notificador/features/events/widgets/event_card_medium.dart';
+import 'package:notificador/features/events/utils/filter_events.dart';
 import 'package:notificador/features/events/models/event_model.dart';
 import 'package:notificador/features/events/services/event_service.dart';
+import 'package:notificador/features/events/widgets/events_filter_bar.dart';
+import 'package:notificador/features/events/widgets/events_list.dart';
 
 class EventsScreen extends StatefulWidget {
   const EventsScreen({super.key});
@@ -20,14 +19,14 @@ class _EventsScreenState extends State<EventsScreen> {
   DateTime? selectedStartDate;
   DateTime? selectedEndDate;
   String? selectedState;
+
   bool isLoading = false;
   bool isLoadingMore = false;
   bool hasMore = true;
-
   String? errorMessage;
+
   final int pageSize = 20;
   int page = 0;
-
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -95,51 +94,16 @@ class _EventsScreenState extends State<EventsScreen> {
     }
   }
 
-  List<Event> getFilteredEvents() {
-    final query = searchQuery.toLowerCase();
-
-    return allEvents.where((event) {
-      final matchesQuery = event.title.toLowerCase().contains(query);
-
-      final matchesCategory =
-          selectedCategory == 'all' || event.category == selectedCategory;
-
-      final matchesState =
-          selectedState == null ||
-          selectedState == 'all' ||
-          event.state == selectedState;
-
-      final matchesDateRange =
-          (selectedStartDate == null && selectedEndDate == null) ||
-          (selectedStartDate != null &&
-              selectedEndDate == null &&
-              event.date.isAfter(
-                selectedStartDate!.subtract(const Duration(days: 1)),
-              )) ||
-          (selectedStartDate == null &&
-              selectedEndDate != null &&
-              event.date.isBefore(
-                selectedEndDate!.add(const Duration(days: 1)),
-              )) ||
-          (selectedStartDate != null &&
-              selectedEndDate != null &&
-              event.date.isAfter(
-                selectedStartDate!.subtract(const Duration(days: 1)),
-              ) &&
-              event.date.isBefore(
-                selectedEndDate!.add(const Duration(days: 1)),
-              ));
-
-      return matchesQuery &&
-          matchesCategory &&
-          matchesState &&
-          matchesDateRange;
-    }).toList();
-  }
-
   @override
   Widget build(BuildContext context) {
-    final filteredEvents = getFilteredEvents();
+    final filteredEvents = filterEvents(
+      allEvents,
+      query: searchQuery,
+      category: selectedCategory,
+      state: selectedState,
+      startDate: selectedStartDate,
+      endDate: selectedEndDate,
+    );
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -154,149 +118,30 @@ class _EventsScreenState extends State<EventsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    onChanged: (value) => setState(() => searchQuery = value),
-                    decoration: InputDecoration(
-                      hintText: 'Search events...',
-                      prefixIcon: Icon(
-                        Icons.search,
-                        color: Theme.of(context).iconTheme.color,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                IconButton(
-                  icon: Icon(
-                    Icons.filter_list,
-                    color: Theme.of(context).iconTheme.color,
-                  ),
-                  onPressed: () async {
-                    final filterResult = await showDialog<EventFilter>(
-                      context: context,
-                      builder:
-                          (context) => EventFilterDialog(
-                            categories: eventCategories,
-                            initialFilter: EventFilter(
-                              category:
-                                  selectedCategory != 'all'
-                                      ? selectedCategory
-                                      : null,
-                              startDate: selectedStartDate,
-                              endDate: selectedEndDate,
-                              state: selectedState,
-                            ),
-                          ),
-                    );
-
-                    if (filterResult != null) {
-                      setState(() {
-                        selectedCategory = filterResult.category ?? 'all';
-                        selectedStartDate = filterResult.startDate;
-                        selectedEndDate = filterResult.endDate;
-                        selectedState = filterResult.state ?? 'all';
-                      });
-                    }
-                  },
-                ),
-              ],
+            EventsFilterBar(
+              searchQuery: searchQuery,
+              selectedCategory: selectedCategory,
+              selectedStartDate: selectedStartDate,
+              selectedEndDate: selectedEndDate,
+              selectedState: selectedState,
+              onQueryChanged: (v) => setState(() => searchQuery = v),
+              onFilterChanged: (filter) {
+                setState(() {
+                  selectedCategory = filter.category ?? 'all';
+                  selectedStartDate = filter.startDate;
+                  selectedEndDate = filter.endDate;
+                  selectedState = filter.state ?? 'all';
+                });
+              },
             ),
-
             const SizedBox(height: 16),
-
-            SizedBox(
-              height: 40,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: eventCategories.length,
-                itemBuilder: (context, index) {
-                  final cat = eventCategories[index];
-                  final isSelected = cat == selectedCategory;
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 6.0),
-                    child: ChoiceChip(
-                      label: Text(cat),
-                      selected: isSelected,
-                      selectedColor: Theme.of(context).colorScheme.primary,
-                      labelStyle: TextStyle(
-                        color:
-                            isSelected
-                                ? Colors.white
-                                : Theme.of(context).textTheme.bodyMedium?.color,
-                      ),
-                      onSelected: (_) => setState(() => selectedCategory = cat),
-                    ),
-                  );
-                },
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
             Expanded(
-              child: Builder(
-                builder: (context) {
-                  if (isLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  if (errorMessage != null) {
-                    return Center(
-                      child: Text(
-                        errorMessage!,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.error,
-                        ),
-                      ),
-                    );
-                  }
-                  if (filteredEvents.isEmpty) {
-                    return Center(
-                      child: Text(
-                        'No events found',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    );
-                  }
-
-                  return ListView.builder(
-                    controller: _scrollController,
-                    itemCount: filteredEvents.length + (isLoadingMore ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index == filteredEvents.length) {
-                        return const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 16),
-                          child: Center(child: CircularProgressIndicator()),
-                        );
-                      }
-                      final event = filteredEvents[index];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (context) =>
-                                        EventDetailsScreen(event: event),
-                              ),
-                            );
-                          },
-                          child: MediumEventCard(event: event),
-                        ),
-                      );
-                    },
-                  );
-                },
+              child: EventsList(
+                scrollController: _scrollController,
+                isLoading: isLoading,
+                isLoadingMore: isLoadingMore,
+                errorMessage: errorMessage,
+                events: filteredEvents,
               ),
             ),
           ],
