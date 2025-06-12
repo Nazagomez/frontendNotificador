@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:notificador/features/profile/widgets/account_section.dart';
 import 'package:notificador/features/profile/widgets/notification_settings_section.dart';
 import 'package:notificador/features/profile/widgets/profile_header.dart';
+import 'package:notificador/shared/services/auth_service.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final authService = context.watch<AuthService>();
+
     return Scaffold(
       appBar: AppBar(title: const Text('Profile')),
       body: LayoutBuilder(
@@ -16,24 +20,19 @@ class ProfileScreen extends StatelessWidget {
 
           return Column(
             children: [
-              // Top 35%: Profile Header
               SizedBox(
                 height: height * 0.35,
                 child: ProfileHeader(
-                  name: 'User Name',
-                  email: 'user@email.com',
+                  name:
+                      '${authService.currentUser?.name ?? 'guest'} ${authService.currentUser?.lastName ?? 'guest'}',
+                  email: authService.currentUser?.email ?? 'unknown@email.com',
                 ),
               ),
-
-              // Bottom 65% split in two parts
               SizedBox(
                 height: height * 0.65,
                 child: Column(
                   children: const [
-                    // NotificationSettings: 25% of total height
                     Expanded(child: NotificationSettingsSection()),
-
-                    // AccountSection: 25% of total height
                     Expanded(child: AccountSection()),
                   ],
                 ),

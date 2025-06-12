@@ -10,7 +10,8 @@ class AuthService extends ChangeNotifier {
   UserModel? _currentUser;
   UserModel? get currentUser => _currentUser;
 
-  bool get isGuest => _currentUser == null || _currentUser!.role == 'anonymous';
+  bool get isGuest => _currentUser == null;
+  bool get isAdmin => _currentUser?.role.toString() == 'admin';
 
   Future<void> login(String email, String password) async {
     final response = await http.post(
