@@ -6,15 +6,22 @@ import 'package:notificador/shared/services/auth_service.dart';
 import 'package:notificador/shared/services/socket_service.dart';
 import 'package:provider/provider.dart';
 
-void main() => runApp(
-  MultiProvider(
-    providers: [
-      ChangeNotifierProvider(create: (_) => SocketService()..connect()),
-      ChangeNotifierProvider(create: (_) => AuthService()),
-    ],
-    child: const MyApp(),
-  ),
-);
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final authService = AuthService();
+  await authService.loadUser();
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => SocketService()..connect()),
+        ChangeNotifierProvider<AuthService>.value(value: authService),
+      ],
+      child: const MyApp(),
+    ),
+  );
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
