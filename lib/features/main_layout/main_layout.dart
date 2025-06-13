@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notificador/core/routes/auth_guard.dart';
 import 'package:provider/provider.dart';
 import 'package:notificador/features/events/screens/events_screen.dart';
 import 'package:notificador/features/home/screens/home_screen.dart';
@@ -33,7 +34,7 @@ class _MainLayoutState extends State<MainLayout> {
       const HomeScreen(),
       const EventsScreen(),
       const NotificationsScreen(),
-      const ProfileScreen(),
+      AuthGuard(builder: (context) => const ProfileScreen()),
     ];
 
     return Scaffold(
