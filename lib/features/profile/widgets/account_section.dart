@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:notificador/shared/services/auth_service.dart';
+import 'package:provider/provider.dart';
 
 class AccountSection extends StatelessWidget {
   const AccountSection({super.key});
@@ -12,6 +14,13 @@ class AccountSection extends StatelessWidget {
             content: const Text('Feature coming soon!'),
           ),
     );
+  }
+
+  Future<void> _handleSignOut(BuildContext context) async {
+    final authService = context.read<AuthService>();
+    final navigator = Navigator.of(context);
+    await authService.logout();
+    navigator.maybePop();
   }
 
   @override
@@ -37,7 +46,7 @@ class AccountSection extends StatelessWidget {
               style: Theme.of(context).textTheme.titleSmall,
             ),
             leading: const Icon(Icons.logout),
-            onTap: () => _showDialog(context, 'Sign Out'),
+            onTap: () => _handleSignOut(context),
           ),
           ListTile(
             title: Text(
