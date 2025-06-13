@@ -8,43 +8,80 @@ class MediumEventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return SizedBox(
       height: 200,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              blurRadius: 4,
-              color:
-                  Theme.of(context).brightness == Brightness.light
-                      ? Colors.black12
-                      : Colors.black45,
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            Expanded(
-              flex: 2,
-              child: Image.asset(
-                'assets/images/image-not-found.png',
-                fit: BoxFit.cover,
-                width: double.infinity,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            boxShadow: [
+              BoxShadow(
+                color: isDark ? Colors.black45 : Colors.black12,
+                blurRadius: 6,
+                offset: const Offset(0, 4),
               ),
-            ),
-            Expanded(
-              flex: 3,
-              child: Padding(
-                padding: const EdgeInsets.all(8),
-                child: Text(
-                  event.title,
-                  style: Theme.of(context).textTheme.titleLarge,
+            ],
+          ),
+          child: Column(
+            children: [
+              // Imagen
+              Expanded(
+                flex: 2,
+                child: Image.asset(
+                  'assets/images/image-not-found.png',
+                  fit: BoxFit.cover,
+                  width: double.infinity,
                 ),
               ),
-            ),
-          ],
+
+              // Contenido
+              Expanded(
+                flex: 3,
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(12),
+                  color:
+                      isDark
+                          ? Colors.grey[900]
+                          : theme.colorScheme.surfaceContainerHighest.withAlpha(
+                            (0.1 * 255).round(),
+                          ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        event.title,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? Colors.white : null,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          const Icon(Icons.calendar_today, size: 14),
+                          const SizedBox(width: 6),
+                          Text(
+                            "${event.date.year.toString().padLeft(4, '0')}-${event.date.month.toString().padLeft(2, '0')}-${event.date.day.toString().padLeft(2, '0')}",
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

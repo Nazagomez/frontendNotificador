@@ -16,25 +16,30 @@ class ProfileScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('Profile')),
       body: LayoutBuilder(
         builder: (context, constraints) {
-          final height = constraints.maxHeight;
-
           return Column(
             children: [
-              SizedBox(
-                height: height * 0.35,
+              Expanded(
+                flex: 3,
                 child: ProfileHeader(
                   name:
                       '${authService.currentUser?.name ?? 'guest'} ${authService.currentUser?.lastName ?? 'guest'}',
                   email: authService.currentUser?.email ?? 'unknown@email.com',
                 ),
               ),
-              SizedBox(
-                height: height * 0.65,
-                child: Column(
-                  children: const [
-                    Expanded(child: NotificationSettingsSection()),
-                    Expanded(child: AccountSection()),
-                  ],
+              Expanded(
+                flex: 7,
+                child: SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight * 0.7,
+                    ),
+                    child: Column(
+                      children: const [
+                        NotificationSettingsSection(),
+                        AccountSection(),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ],

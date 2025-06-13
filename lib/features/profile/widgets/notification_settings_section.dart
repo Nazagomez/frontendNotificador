@@ -17,48 +17,57 @@ class _NotificationSettingsSectionState
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: EdgeInsets.all(8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
+          Text(
             'Notification Settings',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 8),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  SwitchListTile(
-                    value: osNotifications,
-                    onChanged: (value) {
-                      setState(() {
-                        osNotifications = value;
-                      });
-                    },
-                    title: const Text('OS Notifications'),
-                  ),
-                  SwitchListTile(
-                    value: emailNotifications,
-                    onChanged: (value) {
-                      setState(() {
-                        emailNotifications = value;
-                      });
-                    },
-                    title: const Text('Email Notifications'),
-                  ),
-                  SwitchListTile(
-                    value: eventReminders,
-                    onChanged: (value) {
-                      setState(() {
-                        eventReminders = value;
-                      });
-                    },
-                    title: const Text('Event Reminders'),
-                  ),
-                ],
-              ),
+          SwitchListTile(
+            value: osNotifications,
+            onChanged: (value) {
+              setState(() {
+                osNotifications = value;
+              });
+            },
+            secondary: const Icon(
+              Icons.notifications_active_outlined,
+            ), // OS Notifications
+            title: Text(
+              'OS Notifications',
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+          ),
+
+          SwitchListTile(
+            value: emailNotifications,
+            onChanged: (value) {
+              setState(() {
+                emailNotifications = value;
+              });
+            },
+            secondary: const Icon(Icons.email_outlined),
+            title: Text(
+              'Email Notifications',
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+          ),
+
+          SwitchListTile(
+            value: eventReminders,
+            onChanged: (value) {
+              setState(() {
+                eventReminders = value;
+              });
+            },
+            secondary: const Icon(Icons.event_note_outlined),
+            title: Text(
+              'Event Reminders',
+              style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
         ],

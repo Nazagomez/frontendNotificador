@@ -32,6 +32,6 @@ class EventService {
             .toList()
           ..sort((a, b) => a.date.compareTo(b.date));
 
-    return {'featured': featured, 'upcoming': upcoming.take(2).toList()};
+    return {'featured': featured, 'upcoming': upcoming.take(4).toList()};
   }
 }

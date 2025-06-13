@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notificador/features/events/models/event_model.dart';
+import 'package:notificador/shared/services/auth_service.dart';
+import 'package:provider/provider.dart';
 
 class EventDetailsScreen extends StatelessWidget {
   final Event event;
@@ -17,7 +19,6 @@ class EventDetailsScreen extends StatelessWidget {
       backgroundColor: colors.surface,
       body: Column(
         children: [
-          // Imagen con botones superpuestos
           Stack(
             children: [
               Container(
@@ -132,6 +133,32 @@ class EventDetailsScreen extends StatelessWidget {
                   ),
 
                   const SizedBox(height: 24),
+
+                  Center(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        final authService = context.read<AuthService>();
+                        final isLoggedIn = authService.isLoggedIn;
+
+                        if (!isLoggedIn) {
+                          Navigator.pushNamed(context, '/login');
+                          return;
+                        }
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Attendance marked!')),
+                        );
+                      },
+                      icon: const Icon(Icons.check_circle),
+                      label: const Text('Mark Attendance'),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
+                      ),
+                    ),
+                  ),
 
                   Text(
                     'Description',
