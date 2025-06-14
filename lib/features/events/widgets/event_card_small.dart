@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notificador/features/events/models/event_model.dart';
+import 'package:notificador/features/events/utils/image_helper.dart';
 
 class SmallEventCard extends StatelessWidget {
   final Event event;
@@ -11,9 +12,10 @@ class SmallEventCard extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    // Formato corto de fecha: ej. Jun 15
     final formattedDate =
         "${event.date.month.toString().padLeft(2, '0')}/${event.date.day.toString().padLeft(2, '0')}";
+
+    final imagePath = getCategoryImage(event.category);
 
     return AspectRatio(
       aspectRatio: 1,
@@ -23,14 +25,16 @@ class SmallEventCard extends StatelessWidget {
           gradient: LinearGradient(
             colors: [
               theme.colorScheme.surface,
-              theme.colorScheme.surfaceVariant.withOpacity(0.6),
+              theme.colorScheme.surfaceContainerHighest.withAlpha(
+                (0.6 * 255).toInt(),
+              ),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           boxShadow: [
             BoxShadow(
-              color: theme.colorScheme.primary.withOpacity(0.15),
+              color: theme.colorScheme.primary.withAlpha((0.15 * 255).toInt()),
               blurRadius: 10,
               offset: const Offset(0, 6),
             ),
@@ -41,15 +45,20 @@ class SmallEventCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Imagen con overlay sutil
               Expanded(
                 flex: 2,
                 child: Stack(
                   children: [
                     Image.asset(
-                      'assets/images/image-not-found.png',
+                      imagePath,
                       fit: BoxFit.cover,
                       width: double.infinity,
+                      errorBuilder:
+                          (context, error, stackTrace) => Image.asset(
+                            'assets/images/image-not-found.png',
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                          ),
                     ),
                     Container(
                       decoration: BoxDecoration(
@@ -60,7 +69,7 @@ class SmallEventCard extends StatelessWidget {
                             Colors.transparent,
                             isDark
                                 ? Colors.black26
-                                : Colors.white.withOpacity(0.15),
+                                : Colors.white.withAlpha((0.15 * 255).toInt()),
                           ],
                         ),
                       ),
@@ -69,7 +78,6 @@ class SmallEventCard extends StatelessWidget {
                 ),
               ),
 
-              // Título y Fecha
               Expanded(
                 flex: 3,
                 child: Padding(

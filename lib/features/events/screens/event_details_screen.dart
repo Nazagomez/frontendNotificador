@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notificador/features/events/models/event_model.dart';
+import 'package:notificador/features/events/utils/image_helper.dart';
 import 'package:notificador/shared/services/auth_service.dart';
 import 'package:provider/provider.dart';
 
@@ -14,6 +15,7 @@ class EventDetailsScreen extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final textTheme = theme.textTheme;
+    final imagePath = getCategoryImage(event.category);
 
     return Scaffold(
       backgroundColor: colors.surface,
@@ -25,8 +27,8 @@ class EventDetailsScreen extends StatelessWidget {
                 height: size.height * 0.25,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  image: const DecorationImage(
-                    image: AssetImage('assets/images/image-not-found.png'),
+                  image: DecorationImage(
+                    image: AssetImage(imagePath),
                     fit: BoxFit.cover,
                   ),
                 ),

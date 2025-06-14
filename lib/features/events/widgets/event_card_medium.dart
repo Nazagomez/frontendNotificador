@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notificador/features/events/models/event_model.dart';
+import 'package:notificador/features/events/utils/image_helper.dart';
 
 class MediumEventCard extends StatelessWidget {
   final Event event;
@@ -10,6 +11,8 @@ class MediumEventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+
+    final imagePath = getCategoryImage(event.category);
 
     return SizedBox(
       height: 200,
@@ -28,17 +31,23 @@ class MediumEventCard extends StatelessWidget {
           ),
           child: Column(
             children: [
-              // Imagen
+              // image
               Expanded(
                 flex: 2,
                 child: Image.asset(
-                  'assets/images/image-not-found.png',
+                  imagePath,
                   fit: BoxFit.cover,
                   width: double.infinity,
+                  errorBuilder:
+                      (context, error, stackTrace) => Image.asset(
+                        'assets/images/image-not-found.png',
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                      ),
                 ),
               ),
 
-              // Contenido
+              // card body
               Expanded(
                 flex: 3,
                 child: Container(
