@@ -34,6 +34,14 @@ class AccountSection extends StatelessWidget {
           const SizedBox(height: 8),
           ListTile(
             title: Text(
+              'My Events',
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+            leading: const Icon(Icons.event_note),
+            onTap: () => _showDialog(context, 'My Events'),
+          ),
+          ListTile(
+            title: Text(
               'Change Password',
               style: Theme.of(context).textTheme.titleSmall,
             ),
@@ -43,18 +51,12 @@ class AccountSection extends StatelessWidget {
           ListTile(
             title: Text(
               'Sign Out',
-              style: Theme.of(context).textTheme.titleSmall,
+              style: Theme.of(
+                context,
+              ).textTheme.titleSmall?.copyWith(color: Colors.red),
             ),
-            leading: const Icon(Icons.logout),
+            leading: const Icon(Icons.logout, color: Colors.red),
             onTap: () => _handleSignOut(context),
-          ),
-          ListTile(
-            title: Text(
-              'My Events',
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
-            leading: const Icon(Icons.event_note),
-            onTap: () => _showDialog(context, 'My Events'),
           ),
         ],
       ),
