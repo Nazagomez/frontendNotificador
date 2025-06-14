@@ -15,7 +15,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: theme.colorScheme.background,
+      backgroundColor: theme.colorScheme.surface,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -42,7 +42,6 @@ class HomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
 
-                  // Featured events - centradas y sin scroll horizontal
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.25,
                     child: Center(
@@ -71,7 +70,6 @@ class HomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
 
-                  // Upcoming events - scroll vertical natural
                   Expanded(
                     child: ListView.separated(
                       padding: EdgeInsets.zero,

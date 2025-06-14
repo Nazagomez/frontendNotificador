@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
+import 'color_schemes.dart';
 
-const lightTextTheme = TextTheme(
-  titleLarge: TextStyle(fontWeight: FontWeight.bold),
-  bodyMedium: TextStyle(color: Colors.black87),
+final lightTextTheme = TextTheme(
+  titleLarge: TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: 22,
+    color: lightColorScheme.onSurface,
+  ),
+  bodyMedium: TextStyle(fontSize: 16, color: lightColorScheme.onSurface),
 );
 
-const darkTextTheme = TextTheme(
-  titleLarge: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-  bodyMedium: TextStyle(color: Colors.white70),
+final darkTextTheme = TextTheme(
+  titleLarge: TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: 22,
+    color: darkColorScheme.onSurface,
+  ),
+  bodyMedium: TextStyle(fontSize: 16, color: darkColorScheme.onSurface),
 );

@@ -11,7 +11,7 @@ class AppTheme {
     appBarTheme: AppBarTheme(
       backgroundColor: lightColorScheme.surface,
       elevation: 0,
-      foregroundColor: Colors.indigo,
+      foregroundColor: lightColorScheme.onSurface,
     ),
     textTheme: lightTextTheme,
   );
@@ -24,7 +24,7 @@ class AppTheme {
     appBarTheme: AppBarTheme(
       backgroundColor: darkColorScheme.surface,
       elevation: 0,
-      foregroundColor: Colors.indigo.shade200,
+      foregroundColor: darkColorScheme.onSurface,
     ),
     textTheme: darkTextTheme,
   );

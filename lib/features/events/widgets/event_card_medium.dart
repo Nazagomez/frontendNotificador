@@ -20,7 +20,7 @@ class MediumEventCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         child: Container(
           decoration: BoxDecoration(
-            color: theme.colorScheme.surface,
+            color: theme.colorScheme.surfaceContainerHighest,
             boxShadow: [
               BoxShadow(
                 color: isDark ? Colors.black45 : Colors.black12,
