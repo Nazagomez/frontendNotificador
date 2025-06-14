@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:notificador/core/constants/api_constants.dart';
 import 'package:notificador/features/notifications/services/notification_service.dart';
+import 'package:notificador/shared/services/notification_service.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 import 'package:notificador/features/notifications/models/notification_model.dart';
 
@@ -37,6 +38,11 @@ class SocketService with ChangeNotifier {
       _notifications.insert(0, notify);
       _unreadCount++;
       notifyListeners();
+
+      OSNotificationService().showNotification(
+        title: notify.title,
+        body: '${notify.eventTitle}: ${notify.message}',
+      );
     });
 
     _socket.onDisconnect((_) {
