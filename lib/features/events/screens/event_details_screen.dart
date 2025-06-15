@@ -36,23 +36,19 @@ class EventDetailsScreen extends StatelessWidget {
               Positioned(
                 top: 40,
                 left: 16,
-                child: CircleAvatar(
-                  backgroundColor: colors.onSurface.withValues(alpha: 0.6),
-                  child: IconButton(
-                    icon: Icon(Icons.arrow_back, color: colors.surface),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
+                child: _circleIconButton(
+                  context,
+                  icon: Icons.arrow_back,
+                  onPressed: () => Navigator.of(context).pop(),
                 ),
               ),
               Positioned(
                 top: 40,
                 right: 16,
-                child: CircleAvatar(
-                  backgroundColor: colors.onSurface.withValues(alpha: 0.6),
-                  child: IconButton(
-                    icon: Icon(Icons.share, color: colors.surface),
-                    onPressed: () {},
-                  ),
+                child: _circleIconButton(
+                  context,
+                  icon: Icons.share,
+                  onPressed: () {},
                 ),
               ),
             ],
@@ -60,36 +56,37 @@ class EventDetailsScreen extends StatelessWidget {
 
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     event.title,
-                    style: textTheme.titleLarge?.copyWith(
+                    style: textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
+                      color: colors.primary,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 6),
                   Text(
-                    'Organizer ${event.organizer}',
+                    'Organized by ${event.organizer}',
                     style: textTheme.bodyMedium?.copyWith(
-                      color: colors.onSurface.withValues(alpha: 0.7),
+                      color: colors.onSurface.withAlpha((0.6 * 255).toInt()),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
 
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: colors.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: colors.shadow.withValues(alpha: 0.1),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
+                          color: colors.shadow.withAlpha((0.5 * 255).toInt()),
+                          blurRadius: 6,
+                          offset: const Offset(0, 4),
                         ),
                       ],
                     ),
@@ -102,28 +99,28 @@ class EventDetailsScreen extends StatelessWidget {
                           _formatDate(event.date),
                           colors,
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 10),
                         _infoRow(
                           Icons.access_time,
-                          'Hour',
+                          'Time',
                           _formatTime(event.date),
                           colors,
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 10),
                         _infoRow(
                           Icons.location_on,
                           'Location',
                           event.location,
                           colors,
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 10),
                         _infoRow(
                           Icons.category,
                           'Category',
                           event.category,
                           colors,
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 10),
                         _infoRow(
                           Icons.info_outline,
                           'State',
@@ -134,45 +131,48 @@ class EventDetailsScreen extends StatelessWidget {
                     ),
                   ),
 
-                  const SizedBox(height: 24),
-
-                  Center(
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        final authService = context.read<AuthService>();
-                        final isLoggedIn = authService.isLoggedIn;
-
-                        if (!isLoggedIn) {
-                          Navigator.pushNamed(context, '/login');
-                          return;
-                        }
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Attendance marked!')),
-                        );
-                      },
-                      icon: const Icon(Icons.check_circle),
-                      label: const Text('Mark Attendance'),
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 12,
-                        ),
-                      ),
-                    ),
-                  ),
+                  const SizedBox(height: 32),
 
                   Text(
                     'Description',
-                    style: textTheme.titleMedium?.copyWith(
+                    style: textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     event.description,
-                    style: textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
+                    style: textTheme.bodyLarge?.copyWith(height: 1.5),
+                  ),
+
+                  const SizedBox(height: 30),
+
+                  Center(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        final authService = context.read<AuthService>();
+                        if (!authService.isLoggedIn) {
+                          Navigator.pushNamed(context, '/login');
+                          return;
+                        }
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Attendance marked!')),
+                        );
+                      },
+                      icon: const Icon(Icons.check_circle_outline),
+                      label: const Text('Mark Attendance'),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 28,
+                          vertical: 14,
+                        ),
+                        backgroundColor: colors.primary,
+                        foregroundColor: colors.onPrimary,
+                        textStyle: const TextStyle(fontWeight: FontWeight.bold),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -192,31 +192,44 @@ class EventDetailsScreen extends StatelessWidget {
   ) {
     return Row(
       children: [
-        Icon(icon, size: 20, color: colors.onSurfaceVariant),
-        const SizedBox(width: 8),
+        Icon(icon, size: 20, color: colors.primary),
+        const SizedBox(width: 12),
         Text(
           '$label: ',
           style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: colors.onSurfaceVariant,
+            fontWeight: FontWeight.w600,
+            color: colors.onSurface.withAlpha((0.6 * 255).toInt()),
           ),
         ),
         Expanded(
           child: Text(
             value,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(color: colors.onSurfaceVariant),
+            style: TextStyle(
+              color: colors.onSurface.withAlpha((0.6 * 255).toInt()),
+            ),
           ),
         ),
       ],
     );
   }
 
-  String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
+  Widget _circleIconButton(
+    BuildContext context, {
+    required IconData icon,
+    required VoidCallback onPressed,
+  }) {
+    final colors = Theme.of(context).colorScheme;
+    return CircleAvatar(
+      backgroundColor: colors.surface.withAlpha((0.6 * 255).toInt()),
+      child: IconButton(
+        icon: Icon(icon, color: colors.primary),
+        onPressed: onPressed,
+      ),
+    );
   }
 
-  String _formatTime(DateTime date) {
-    return '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
-  }
+  String _formatDate(DateTime date) => '${date.day}/${date.month}/${date.year}';
+  String _formatTime(DateTime date) =>
+      '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
 }
