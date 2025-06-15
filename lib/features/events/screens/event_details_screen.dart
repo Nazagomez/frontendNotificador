@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notificador/features/events/dialogs/edit_event_dialog.dart';
 import 'package:notificador/features/events/models/event_model.dart';
 import 'package:notificador/features/events/utils/image_helper.dart';
 import 'package:notificador/shared/services/auth_service.dart';
@@ -16,6 +17,9 @@ class EventDetailsScreen extends StatelessWidget {
     final colors = theme.colorScheme;
     final textTheme = theme.textTheme;
     final imagePath = getCategoryImage(event.category);
+
+    final authService = context.watch<AuthService>();
+    final isAdmin = authService.isAdmin;
 
     return Scaffold(
       backgroundColor: colors.surface,
@@ -42,7 +46,7 @@ class EventDetailsScreen extends StatelessWidget {
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ),
-              Positioned(
+              /* Positioned( // i have to look how to share in flutter could be a link du-no
                 top: 40,
                 right: 16,
                 child: _circleIconButton(
@@ -50,7 +54,7 @@ class EventDetailsScreen extends StatelessWidget {
                   icon: Icons.share,
                   onPressed: () {},
                 ),
-              ),
+              ), */
             ],
           ),
 
@@ -181,6 +185,29 @@ class EventDetailsScreen extends StatelessWidget {
           ),
         ],
       ),
+      floatingActionButton:
+          isAdmin
+              ? Transform.translate(
+                offset: const Offset(0, -12),
+                child: Builder(
+                  builder:
+                      (context) => FloatingActionButton(
+                        onPressed: () async {
+                          final updated = await showDialog<bool>(
+                            context: context,
+                            builder: (_) => EditEventDialog(event: event),
+                          );
+
+                          if (updated == true && context.mounted) {
+                            Navigator.of(context).pop(true);
+                          }
+                        },
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        child: const Icon(Icons.edit),
+                      ),
+                ),
+              )
+              : null,
     );
   }
 

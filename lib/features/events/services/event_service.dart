@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:notificador/features/events/models/create_event_model.dart';
+import 'package:notificador/features/events/models/update_event_model.dart';
 import '../../../core/constants/api_constants.dart';
 import '../models/event_model.dart';
 
@@ -33,5 +35,43 @@ class EventService {
           ..sort((a, b) => a.date.compareTo(b.date));
 
     return {'featured': featured, 'upcoming': upcoming.take(4).toList()};
+  }
+
+  static Future<Event> createEvent(CreateEvent event) async {
+    final uri = Uri.parse(eventsUrl);
+
+    final response = await http.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: jsonEncode(event.toJson()),
+    );
+
+    if (response.statusCode == 201 || response.statusCode == 200) {
+      return Event.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to create event: ${response.body}');
+    }
+  }
+
+  static Future<Event> updateEvent(String id, UpdateEvent updatedEvent) async {
+    final uri = Uri.parse('$eventsUrl/$id');
+
+    final response = await http.put(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: jsonEncode(updatedEvent.toJson()),
+    );
+
+    if (response.statusCode == 200) {
+      return Event.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to update event: ${response.body}');
+    }
   }
 }

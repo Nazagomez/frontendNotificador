@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:notificador/features/events/dialogs/add_event_dialog.dart';
+import 'package:notificador/features/events/screens/event_details_screen.dart';
 import 'package:notificador/features/events/utils/filter_events.dart';
 import 'package:notificador/features/events/models/event_model.dart';
 import 'package:notificador/features/events/services/event_service.dart';
 import 'package:notificador/features/events/widgets/events_filter_bar.dart';
 import 'package:notificador/features/events/widgets/events_list.dart';
+import 'package:notificador/shared/services/auth_service.dart';
+import 'package:provider/provider.dart';
 
 class EventsScreen extends StatefulWidget {
   const EventsScreen({super.key});
@@ -96,6 +100,9 @@ class _EventsScreenState extends State<EventsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authService = context.watch<AuthService>();
+    final isAdmin = authService.isAdmin;
+
     final filteredEvents = filterEvents(
       allEvents,
       query: searchQuery,
@@ -142,11 +149,43 @@ class _EventsScreenState extends State<EventsScreen> {
                 isLoadingMore: isLoadingMore,
                 errorMessage: errorMessage,
                 events: filteredEvents,
+                onEventTap: (event) async {
+                  final updated = await Navigator.push<bool>(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => EventDetailsScreen(event: event),
+                    ),
+                  );
+
+                  if (updated == true) {
+                    _loadEvents();
+                  }
+                },
               ),
             ),
           ],
         ),
       ),
+      floatingActionButton:
+          isAdmin
+              ? Transform.translate(
+                offset: const Offset(0, -12),
+                child: FloatingActionButton(
+                  onPressed: () async {
+                    final created = await showDialog<bool>(
+                      context: context,
+                      builder: (_) => const AddEventDialog(),
+                    );
+
+                    if (created == true) {
+                      _loadEvents();
+                    }
+                  },
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  child: const Icon(Icons.add),
+                ),
+              )
+              : null,
     );
   }
 }

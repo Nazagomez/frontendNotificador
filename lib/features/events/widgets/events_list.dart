@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:notificador/features/events/models/event_model.dart';
-import 'package:notificador/features/events/screens/event_details_screen.dart';
 import 'package:notificador/features/events/widgets/event_card_medium.dart';
 
 class EventsList extends StatelessWidget {
@@ -10,6 +9,8 @@ class EventsList extends StatelessWidget {
   final String? errorMessage;
   final List<Event> events;
 
+  final void Function(Event event)? onEventTap;
+
   const EventsList({
     super.key,
     required this.scrollController,
@@ -17,6 +18,7 @@ class EventsList extends StatelessWidget {
     required this.isLoadingMore,
     required this.errorMessage,
     required this.events,
+    this.onEventTap,
   });
 
   @override
@@ -60,14 +62,7 @@ class EventsList extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => EventDetailsScreen(event: event),
-                ),
-              );
-            },
+            onTap: () => onEventTap?.call(event),
             child: MediumEventCard(event: event),
           ),
         );
