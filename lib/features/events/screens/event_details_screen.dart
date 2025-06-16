@@ -1,25 +1,99 @@
 import 'package:flutter/material.dart';
 import 'package:notificador/features/events/dialogs/edit_event_dialog.dart';
 import 'package:notificador/features/events/models/event_model.dart';
+import 'package:notificador/features/events/services/event_service.dart';
 import 'package:notificador/features/events/utils/image_helper.dart';
 import 'package:notificador/shared/services/auth_service.dart';
 import 'package:provider/provider.dart';
 
-class EventDetailsScreen extends StatelessWidget {
+class EventDetailsScreen extends StatefulWidget {
   final Event event;
 
   const EventDetailsScreen({super.key, required this.event});
 
   @override
+  State<EventDetailsScreen> createState() => _EventDetailsScreenState();
+}
+
+class _EventDetailsScreenState extends State<EventDetailsScreen> {
+  bool isAttending = false;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAttendance();
+  }
+
+  Future<void> _checkAttendance() async {
+    final authService = context.read<AuthService>();
+    if (!authService.isLoggedIn) return;
+
+    final userId = authService.currentUser?.id;
+
+    try {
+      if (userId == null) {
+        setState(() => isLoading = false);
+        return;
+      }
+      final attending = await EventService.hasUserRegisteredAttendance(
+        widget.event.id,
+        userId,
+      );
+      if (mounted) {
+        setState(() {
+          isAttending = attending;
+          isLoading = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> _toggleAttendance() async {
+    final authService = context.read<AuthService>();
+    if (!authService.isLoggedIn) {
+      Navigator.pushNamed(context, '/login');
+      return;
+    }
+
+    final userId = authService.currentUser?.id;
+
+    try {
+      setState(() => isLoading = true);
+
+      if (userId == null) {
+        setState(() => isLoading = false);
+        return;
+      }
+
+      if (isAttending) {
+        await EventService.cancelAttendance(widget.event.id, userId);
+      } else {
+        await EventService.registerAttendance(widget.event.id, userId);
+      }
+
+      if (mounted) {
+        setState(() {
+          isAttending = !isAttending;
+          isLoading = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) setState(() => isLoading = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final event = widget.event;
     final size = MediaQuery.of(context).size;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final textTheme = theme.textTheme;
     final imagePath = getCategoryImage(event.category);
-
-    final authService = context.watch<AuthService>();
-    final isAdmin = authService.isAdmin;
+    final isAdmin = context.watch<AuthService>().isAdmin;
 
     return Scaffold(
       backgroundColor: colors.surface,
@@ -46,15 +120,6 @@ class EventDetailsScreen extends StatelessWidget {
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ),
-              /* Positioned( // i have to look how to share in flutter could be a link du-no
-                top: 40,
-                right: 16,
-                child: _circleIconButton(
-                  context,
-                  icon: Icons.share,
-                  onPressed: () {},
-                ),
-              ), */
             ],
           ),
 
@@ -79,7 +144,6 @@ class EventDetailsScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
@@ -134,9 +198,7 @@ class EventDetailsScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 32),
-
                   Text(
                     'Description',
                     style: textTheme.titleLarge?.copyWith(
@@ -148,36 +210,39 @@ class EventDetailsScreen extends StatelessWidget {
                     event.description,
                     style: textTheme.bodyLarge?.copyWith(height: 1.5),
                   ),
-
                   const SizedBox(height: 30),
 
                   Center(
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        final authService = context.read<AuthService>();
-                        if (!authService.isLoggedIn) {
-                          Navigator.pushNamed(context, '/login');
-                          return;
-                        }
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Attendance marked!')),
-                        );
-                      },
-                      icon: const Icon(Icons.check_circle_outline),
-                      label: const Text('Mark Attendance'),
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 28,
-                          vertical: 14,
-                        ),
-                        backgroundColor: colors.primary,
-                        foregroundColor: colors.onPrimary,
-                        textStyle: const TextStyle(fontWeight: FontWeight.bold),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
+                    child:
+                        isLoading
+                            ? const CircularProgressIndicator()
+                            : ElevatedButton.icon(
+                              onPressed: _toggleAttendance,
+                              icon: Icon(
+                                isAttending
+                                    ? Icons.cancel
+                                    : Icons.check_circle_outline,
+                              ),
+                              label: Text(
+                                isAttending
+                                    ? 'Cancel Attendance'
+                                    : 'Mark Attendance',
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 28,
+                                  vertical: 14,
+                                ),
+                                backgroundColor: colors.primary,
+                                foregroundColor: colors.onPrimary,
+                                textStyle: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
                   ),
                 ],
               ),
@@ -189,22 +254,18 @@ class EventDetailsScreen extends StatelessWidget {
           isAdmin
               ? Transform.translate(
                 offset: const Offset(0, -12),
-                child: Builder(
-                  builder:
-                      (context) => FloatingActionButton(
-                        onPressed: () async {
-                          final updated = await showDialog<bool>(
-                            context: context,
-                            builder: (_) => EditEventDialog(event: event),
-                          );
-
-                          if (updated == true && context.mounted) {
-                            Navigator.of(context).pop(true);
-                          }
-                        },
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        child: const Icon(Icons.edit),
-                      ),
+                child: FloatingActionButton(
+                  onPressed: () async {
+                    final updated = await showDialog<bool>(
+                      context: context,
+                      builder: (_) => EditEventDialog(event: event),
+                    );
+                    if (updated == true && context.mounted) {
+                      Navigator.of(context).pop(true);
+                    }
+                  },
+                  backgroundColor: colors.primary,
+                  child: const Icon(Icons.edit),
                 ),
               )
               : null,

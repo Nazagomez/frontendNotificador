@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'package:http/http.dart' as http;
 import 'package:notificador/features/events/models/create_event_model.dart';
 import 'package:notificador/features/events/models/update_event_model.dart';
@@ -72,6 +73,62 @@ class EventService {
       return Event.fromJson(jsonDecode(response.body));
     } else {
       throw Exception('Failed to update event: ${response.body}');
+    }
+  }
+
+  static Future<void> registerAttendance(String id, String userId) async {
+    final uri = Uri.parse('$eventsUrl/$id/$userId');
+
+    final response = await http.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to register attendance');
+    }
+    return;
+  }
+
+  static Future<void> cancelAttendance(String id, String userId) async {
+    final uri = Uri.parse('$eventsUrl/$id/$userId');
+
+    final response = await http.delete(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to cancel attendance');
+    }
+    return;
+  }
+
+  static Future<bool> hasUserRegisteredAttendance(
+    String id,
+    String userId,
+  ) async {
+    final uri = Uri.parse('$eventsUrl/$id/attendance/$userId');
+
+    final response = await http.get(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data['attending'] == true;
+    } else {
+      throw Exception('Failed to check attendance: ${response.body}');
     }
   }
 }
