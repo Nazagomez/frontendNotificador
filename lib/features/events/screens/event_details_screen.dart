@@ -195,6 +195,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                           event.state,
                           colors,
                         ),
+                        const SizedBox(height: 10),
+                        _infoRow(
+                          Icons.people_outline,
+                          'Attendees',
+                          event.attendeesCount.toString(),
+                          colors,
+                        ),
                       ],
                     ),
                   ),

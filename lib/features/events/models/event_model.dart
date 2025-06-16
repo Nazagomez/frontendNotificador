@@ -8,6 +8,7 @@ class Event {
   final String category;
   final String state;
   final bool featured;
+  final int attendeesCount;
 
   Event({
     required this.id,
@@ -19,6 +20,7 @@ class Event {
     required this.category,
     required this.state,
     required this.featured,
+    required this.attendeesCount,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) {
@@ -32,6 +34,7 @@ class Event {
       category: json['category'] ?? 'other',
       state: json['state'] ?? '',
       featured: json['featured'] ?? false,
+      attendeesCount: json['attendeesCount'] ?? 0,
     );
   }
 }
