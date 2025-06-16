@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'package:http/http.dart' as http;
 import 'package:notificador/features/events/models/create_event_model.dart';
 import 'package:notificador/features/events/models/update_event_model.dart';
