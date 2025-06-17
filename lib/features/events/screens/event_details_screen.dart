@@ -28,7 +28,10 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
 
   Future<void> _checkAttendance() async {
     final authService = context.read<AuthService>();
-    if (!authService.isLoggedIn) return;
+    if (!authService.isLoggedIn) {
+      setState(() => isLoading = false);
+      return;
+    }
 
     final userId = authService.currentUser?.id;
 
@@ -54,8 +57,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
 
   Future<void> _toggleAttendance() async {
     final authService = context.read<AuthService>();
+
     if (!authService.isLoggedIn) {
-      Navigator.pushNamed(context, '/login');
+      await Navigator.pushNamed(context, '/login');
+      if (context.mounted && authService.isLoggedIn) {
+        await _checkAttendance();
+      }
+
       return;
     }
 
