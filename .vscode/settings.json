@@ -1,0 +1,12 @@
+{
+	"dart.flutterHotReloadOnSave": "all",
+	"cSpell.words": [
+		"androidx",
+		"Avoz",
+		"cupertino",
+		"multidex",
+		"notificador",
+		"prefs"
+	],
+	"java.configuration.updateBuildConfiguration": "interactive"
+}
