@@ -4,6 +4,8 @@ import 'package:notificador/core/constants/event_categories.dart';
 import 'package:notificador/features/events/models/event_model.dart';
 import 'package:notificador/features/events/models/update_event_model.dart';
 import 'package:notificador/features/events/services/event_service.dart';
+import 'package:notificador/shared/services/auth_service.dart';
+import 'package:provider/provider.dart';
 
 class EditEventDialog extends StatefulWidget {
   final Event event;
@@ -84,6 +86,16 @@ class _EditEventDialogState extends State<EditEventDialog> {
   Future<void> _handleUpdate() async {
     if (!_formKey.currentState!.validate()) return;
 
+    final authService = context.read<AuthService>();
+    final userId = authService.currentUser?.id;
+
+    if (userId == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('No user logged in')));
+      return;
+    }
+
     final updated = UpdateEvent(
       title: _titleController.text,
       description: _descriptionController.text,
@@ -99,7 +111,7 @@ class _EditEventDialogState extends State<EditEventDialog> {
     setState(() => _isSubmitting = true);
 
     try {
-      await EventService.updateEvent(widget.event.id, updated);
+      await EventService.updateEvent(widget.event.id, updated, userId);
       if (!mounted) return;
       Navigator.of(context).pop(true);
     } catch (e) {

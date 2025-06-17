@@ -3,6 +3,7 @@ import 'package:notificador/features/events/dialogs/edit_event_dialog.dart';
 import 'package:notificador/features/events/models/event_model.dart';
 import 'package:notificador/features/events/services/event_service.dart';
 import 'package:notificador/features/events/utils/image_helper.dart';
+import 'package:notificador/features/notifications/dialogs/add_notification_dialog.dart';
 import 'package:notificador/shared/services/auth_service.dart';
 import 'package:provider/provider.dart';
 
@@ -72,6 +73,14 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
         await EventService.cancelAttendance(widget.event.id, userId);
       } else {
         await EventService.registerAttendance(widget.event.id, userId);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Attendance registered'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
       }
 
       if (mounted) {
@@ -80,8 +89,16 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
           isLoading = false;
         });
       }
-    } catch (_) {
-      if (mounted) setState(() => isLoading = false);
+    } catch (e) {
+      if (mounted) {
+        setState(() => isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString().replaceFirst('Exception: ', '')),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -258,6 +275,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               ),
                             ),
                   ),
+                  const SizedBox(height: 100),
                 ],
               ),
             ),
@@ -266,21 +284,50 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
       ),
       floatingActionButton:
           isAdmin
-              ? Transform.translate(
-                offset: const Offset(0, -12),
-                child: FloatingActionButton(
-                  onPressed: () async {
-                    final updated = await showDialog<bool>(
-                      context: context,
-                      builder: (_) => EditEventDialog(event: event),
-                    );
-                    if (updated == true && context.mounted) {
-                      Navigator.of(context).pop(true);
-                    }
-                  },
-                  backgroundColor: colors.primary,
-                  child: const Icon(Icons.edit),
-                ),
+              ? Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Transform.translate(
+                    offset: const Offset(0, -20),
+                    child: FloatingActionButton(
+                      heroTag: 'notify-btn',
+                      onPressed: () async {
+                        final sent = await showDialog<bool>(
+                          context: context,
+                          builder:
+                              (_) => AddNotificationDialog(eventId: event.id),
+                        );
+                        if (sent == true && context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Notification sent!')),
+                          );
+                        }
+                      },
+                      backgroundColor: colors.secondary,
+                      child: const Icon(Icons.notifications_active),
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  Transform.translate(
+                    offset: const Offset(0, -12),
+                    child: FloatingActionButton(
+                      heroTag: 'edit-btn',
+                      onPressed: () async {
+                        final updated = await showDialog<bool>(
+                          context: context,
+                          builder: (_) => EditEventDialog(event: event),
+                        );
+                        if (updated == true && context.mounted) {
+                          Navigator.of(context).pop(true);
+                        }
+                      },
+                      backgroundColor: colors.primary,
+                      child: const Icon(Icons.edit),
+                    ),
+                  ),
+                ],
               )
               : null,
     );

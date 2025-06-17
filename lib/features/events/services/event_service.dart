@@ -56,7 +56,11 @@ class EventService {
     }
   }
 
-  static Future<Event> updateEvent(String id, UpdateEvent updatedEvent) async {
+  static Future<Event> updateEvent(
+    String id,
+    UpdateEvent updatedEvent,
+    userId,
+  ) async {
     final uri = Uri.parse('$eventsUrl/$id');
 
     final response = await http.put(
@@ -65,7 +69,7 @@ class EventService {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
-      body: jsonEncode(updatedEvent.toJson()),
+      body: jsonEncode({...updatedEvent.toJson(), 'UserId': userId}),
     );
 
     if (response.statusCode == 200) {
@@ -87,7 +91,12 @@ class EventService {
     );
 
     if (response.statusCode != 200) {
-      throw Exception('Failed to register attendance');
+      if (response.statusCode == 403) {
+        final Map<String, dynamic> errorData = jsonDecode(response.body);
+        throw errorData['message'];
+      } else {
+        throw Exception('Failed to register attendance');
+      }
     }
     return;
   }
