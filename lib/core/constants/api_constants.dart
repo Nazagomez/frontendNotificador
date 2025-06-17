@@ -1,4 +1,7 @@
 class ApiConstants {
-  static const String baseUrl = 'http://192.168.100.246:3000/api';
-  static const String url = 'http://192.168.100.246:3000';
+  static const String baseUrl =
+      'https://backend-notificador-production.up.railway.app/api';
+  static const String url =
+      'https://backend-notificador-production.up.railway.app';
 }
+//192.168.100.246
