@@ -20,6 +20,7 @@ class _EditEventDialogState extends State<EditEventDialog> {
   late final TextEditingController _descriptionController;
   late final TextEditingController _locationController;
   late final TextEditingController _organizerController;
+  late final TextEditingController _capacityController;
   late DateTime _selectedDate;
   late String _selectedCategory;
   late String _selectedState;
@@ -35,6 +36,9 @@ class _EditEventDialogState extends State<EditEventDialog> {
     );
     _locationController = TextEditingController(text: widget.event.location);
     _organizerController = TextEditingController(text: widget.event.organizer);
+    _capacityController = TextEditingController(
+      text: widget.event.capacity.toString(),
+    );
     _selectedDate = widget.event.date;
     _selectedCategory = widget.event.category;
     _selectedState = widget.event.state;
@@ -46,6 +50,7 @@ class _EditEventDialogState extends State<EditEventDialog> {
     _titleController.dispose();
     _descriptionController.dispose();
     _locationController.dispose();
+    _capacityController.dispose();
     _organizerController.dispose();
     super.dispose();
   }
@@ -85,6 +90,7 @@ class _EditEventDialogState extends State<EditEventDialog> {
       date: _selectedDate.toUtc(),
       location: _locationController.text,
       organizer: _organizerController.text,
+      capacity: int.tryParse(_capacityController.text),
       category: _selectedCategory,
       state: _selectedState,
       featured: _isFeatured,
@@ -131,6 +137,7 @@ class _EditEventDialogState extends State<EditEventDialog> {
               ),
               _buildTextField(_locationController, 'Location'),
               _buildTextField(_organizerController, 'Organizer'),
+              _buildTextField(_capacityController, 'Event Capacity'),
               const SizedBox(height: 12),
               ListTile(
                 contentPadding: EdgeInsets.zero,

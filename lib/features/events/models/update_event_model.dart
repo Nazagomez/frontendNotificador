@@ -4,6 +4,7 @@ class UpdateEvent {
   final DateTime? date;
   final String? location;
   final String? organizer;
+  final int? capacity;
   final String? category;
   final String? state;
   final bool? featured;
@@ -14,6 +15,7 @@ class UpdateEvent {
     this.date,
     this.location,
     this.organizer,
+    this.capacity,
     this.category,
     this.state,
     this.featured,
@@ -27,6 +29,7 @@ class UpdateEvent {
       if (location != null) 'location': location,
       if (organizer != null) 'organizer': organizer,
       if (category != null) 'category': category,
+      if (category != null) 'capacity': capacity,
       if (state != null) 'state': state,
       if (featured != null) 'featured': featured,
     };

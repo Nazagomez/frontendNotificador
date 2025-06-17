@@ -19,6 +19,7 @@ class _AddEventDialogState extends State<AddEventDialog> {
   final _descriptionController = TextEditingController();
   final _locationController = TextEditingController();
   final _organizerController = TextEditingController();
+  final _capacityController = TextEditingController();
   DateTime? _selectedDate;
   String _selectedCategory = createEventCategories.first;
   bool _featured = false;
@@ -43,6 +44,7 @@ class _AddEventDialogState extends State<AddEventDialog> {
       date: _selectedDate!,
       location: _locationController.text,
       organizer: _organizerController.text,
+      capacity: int.tryParse(_capacityController.text) ?? 0,
       category: _selectedCategory,
       featured: _featured,
       userId: userId,
@@ -116,6 +118,8 @@ class _AddEventDialogState extends State<AddEventDialog> {
               ),
               _buildTextField(_locationController, 'Location'),
               _buildTextField(_organizerController, 'Organizer'),
+              _buildTextField(_capacityController, 'Event Capacity'),
+
               const SizedBox(height: 12),
 
               ListTile(

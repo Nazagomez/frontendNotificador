@@ -5,6 +5,7 @@ class CreateEvent {
   final DateTime date;
   final String location;
   final String organizer;
+  final int capacity;
   final String category;
   final bool featured;
   final String userId;
@@ -15,6 +16,7 @@ class CreateEvent {
     required this.date,
     required this.location,
     required this.organizer,
+    required this.capacity,
     required this.category,
     required this.featured,
     required this.userId,
@@ -27,6 +29,7 @@ class CreateEvent {
       'date': date.toUtc().toIso8601String(),
       'location': location,
       'organizer': organizer,
+      'capacity': capacity,
       'category': category,
       'featured': featured,
       'UserId': userId,

@@ -5,6 +5,7 @@ class Event {
   final DateTime date;
   final String location;
   final String organizer;
+  final int capacity;
   final String category;
   final String state;
   final bool featured;
@@ -17,6 +18,7 @@ class Event {
     required this.date,
     required this.location,
     required this.organizer,
+    required this.capacity,
     required this.category,
     required this.state,
     required this.featured,
@@ -31,6 +33,7 @@ class Event {
       date: DateTime.tryParse(json['date'] ?? '') ?? DateTime.now(),
       location: json['location'] ?? '',
       organizer: json['organizer'] ?? '',
+      capacity: json['capacity'] ?? 0,
       category: json['category'] ?? 'other',
       state: json['state'] ?? '',
       featured: json['featured'] ?? false,
