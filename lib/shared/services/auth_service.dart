@@ -49,6 +49,32 @@ class AuthService extends ChangeNotifier {
     }
   }
 
+  Future<void> resetPassword(
+    String email,
+    String password,
+    String newPassword,
+  ) async {
+    final uri = Uri.parse('${ApiConstants.baseUrl}/auth/reset-password');
+
+    final response = await http.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: jsonEncode({
+        'email': email,
+        'password': password,
+        'newPassword': newPassword,
+      }),
+    );
+
+    if (response.statusCode != 200) {
+      final Map<String, dynamic> error = jsonDecode(response.body);
+      throw Exception(error['message'] ?? 'Failed to reset password');
+    }
+  }
+
   Future<void> logout() async {
     _currentUser = null;
     await _prefs.remove('user');
