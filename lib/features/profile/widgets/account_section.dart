@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notificador/features/profile/dialogs/change_password_dialog.dart';
 import 'package:notificador/shared/services/auth_service.dart';
 import 'package:provider/provider.dart';
 
@@ -46,7 +47,21 @@ class AccountSection extends StatelessWidget {
               style: Theme.of(context).textTheme.titleSmall,
             ),
             leading: const Icon(Icons.lock_outline),
-            onTap: () => _showDialog(context, 'Change Password'),
+            onTap: () async {
+              final changed = await showDialog<bool>(
+                context: context,
+                builder: (_) => const ChangePasswordDialog(),
+              );
+
+              if (changed == true && context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Password changed successfully!'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              }
+            },
           ),
           ListTile(
             title: Text(
